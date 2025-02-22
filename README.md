@@ -1,2 +1,2 @@
 # cyberspacy
-cyber (-security and -operations) text processing toolkit with spacy
+cybersecurity text processing toolkit with spacy, with modular components and use cases
