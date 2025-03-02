@@ -44,9 +44,12 @@ jobs:
     - name: Install dependencies      
       run: |
         python --version
-        pip install flake8
+        
         conda env create -f environment.yml
+        
         conda activate cyberspacy
+        pip install flake8
+        
         conda list
 
     - name: print v version
