@@ -8,3 +8,4 @@ dependencies:
     - spacy>=3.8
     - spacy-model-en_core_web_sm
     - pytest
+    - pandas
