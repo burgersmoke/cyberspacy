@@ -42,7 +42,7 @@ jobs:
     - name: Install dependencies      
       run: |
         python --version
-        
+        pip install flake8
 
     - name: print v version
       run: python -c 'import cyberspacy; print(cyberspacy.__version__); print(cyberspacy.__file__)'
