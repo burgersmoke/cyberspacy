@@ -65,6 +65,9 @@ class TrainMaliciousURLClassifier(object):
         # now let's concatenate these into one...
         self.df = pd.concat(df_list, ignore_index = True)
 
+        self.df = self.df.fillna(0)
+        self.df = self.df.astype({self.cyberspacy_label_name: 'int32'})
+
 
     def train(self):
         # let's split into train/validate/test...
@@ -150,7 +153,7 @@ class TrainMaliciousURLClassifier(object):
 
         y_train_pred = search.predict(X_train)
 
-        print('Validation set performance:')
+        print('Train set performance:')
         print(classification_report(y_train, y_train_pred))
 
         y_val_pred = search.predict(X_val)
