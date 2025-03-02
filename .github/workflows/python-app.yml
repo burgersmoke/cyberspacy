@@ -36,6 +36,15 @@ jobs:
     - uses: conda-incubator/setup-miniconda@v3
       with:
         auto-activate-base: true
+        activate-environment: ""
+        
+    - name: Conda info
+        shell: bash -el {0}
+        run: conda info
+      - name: Conda list
+        shell: pwsh
+        run: conda list
+        
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -47,6 +56,7 @@ jobs:
         
         conda env create -f environment.yml
         
+        conda init
         conda activate cyberspacy
         pip install flake8
         
