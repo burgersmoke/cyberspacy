@@ -18,6 +18,12 @@ class URLParser(object):
                 # let's parse this and add extensions we might use for features
                 url_fragments = urllib.parse.urlparse(token.text)
 
-                token._.URL_scheme = url_fragments[0]
+                # per this: https://docs.python.org/3/library/urllib.parse.html
+                token._.URL_scheme =    url_fragments[0]
+                token._.URL_netloc =    url_fragments[1]
+                token._.URL_path =      url_fragments[2]
+                token._.URL_params =    url_fragments[3]
+                token._.URL_query =     url_fragments[4]
+                token._.URL_fragment =  url_fragments[5]
 
         return doc
