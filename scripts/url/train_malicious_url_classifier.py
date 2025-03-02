@@ -3,6 +3,7 @@ import glob
 import logging
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 import cyberspacy
 from cyberspacy.pipelines import PipelineFactory
@@ -11,9 +12,13 @@ logger = logging.getLogger(__name__)
 
 class TrainMaliciousURLClassifier(object):
     def __init__(self,
+                 validation_percent = 0.20,
+                 test_percent = 0.10,
                  max_instances = 50):
 
         self.cyberspacy_label_name = 'cyberspacy_label'
+        self.validation_percent = validation_percent
+        self.test_percent = test_percent
         self.max_instances = max_instances
 
         # let's load the data we need
@@ -57,6 +62,32 @@ class TrainMaliciousURLClassifier(object):
             self.df = pd.concat([pos_df, neg_df], ignore_index = False)
 
             logger.info(f'Total instances after setting a max: {len(self.df)}')
+
+        # let's get our X (text at least) and y
+
+        X_text = self.df['url'].tolist()
+
+        # before we go on, let's convert these to feature dictionaries
+
+        y = self.df[self.cyberspacy_label_name].tolist()
+
+        val_test_percent = self.validation_percent + self.test_percent
+        train_percent = 1.0 - val_test_percent
+
+        X_text_train, X_text_valtest, y_train, y_valtest = train_test_split(X_text, y, stratify = y,
+                                                                            random_state = 77)
+
+        test_size = int(len(X_text) * self.test_percent)
+
+        X_text_val, X_text_test, y_val, y_test = train_test_split(X_text_valtest, y_valtest,
+                                                                  test_size = test_size, stratify = y_valtest,
+                                                                  random_state = 777)
+
+        print(f'len(y_train): {len(y_train)}')
+        print(f'len(y_val): {len(y_val)}')
+        print(f'len(y_test): {len(y_test)}')
+
+
 
 
 

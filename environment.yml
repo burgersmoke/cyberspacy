@@ -9,3 +9,4 @@ dependencies:
     - spacy-model-en_core_web_sm
     - pytest
     - pandas
+    - scikit-learn
