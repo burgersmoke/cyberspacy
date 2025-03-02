@@ -1,0 +1,40 @@
+3/2/2025
+
+feature mix:
+
+feature_dict['has_fragment'] = len(token._.URL_fragment) > 0
+feature_dict['has_query'] = len(token._.URL_query) > 0
+feature_dict['has_params'] = len(token._.URL_params) > 0
+feature_dict['subdomain'] = subdomain
+feature_dict['domain'] = domain
+feature_dict['domain_extension'] = domain_extension
+feature_dict['total_netloc_tokens'] = len(netloc_tokens)
+# experimental features
+feature_dict['total_netloc_tokens_over_3'] = len(netloc_tokens) > 3
+feature_dict['total_netloc_tokens_over_4'] = len(netloc_tokens) > 4
+
+len(y_train): 826025
+len(y_val): 165206
+len(y_test): 110136
+
+Best: 0.825330 using {'xgb__max_depth': 10, 'xgb__learning_rate': 0.1}
+
+Train set performance:
+              precision    recall  f1-score   support
+
+           0       0.83      0.96      0.89    604771
+           1       0.81      0.45      0.58    221254
+
+    accuracy                           0.83    826025
+   macro avg       0.82      0.71      0.74    826025
+weighted avg       0.82      0.83      0.81    826025
+
+Validation set performance:
+              precision    recall  f1-score   support
+
+           0       0.83      0.96      0.89    120955
+           1       0.81      0.46      0.58     44251
+
+    accuracy                           0.83    165206
+   macro avg       0.82      0.71      0.74    165206
+weighted avg       0.82      0.83      0.81    165206

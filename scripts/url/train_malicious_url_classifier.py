@@ -22,7 +22,8 @@ class TrainMaliciousURLClassifier(object):
     def __init__(self,
                  validation_percent = 0.20,
                  test_percent = 0.10,
-                 max_instances = 50,
+                 #max_instances = 50,
+                 max_instances=None,
                  evaluate_test_data = False):
 
         self.cyberspacy_label_name = 'cyberspacy_label'
