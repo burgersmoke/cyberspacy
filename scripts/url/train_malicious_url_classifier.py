@@ -24,8 +24,8 @@ class TrainMaliciousURLClassifier(object):
     def __init__(self,
                  validation_percent = 0.20,
                  test_percent = 0.10,
-                 max_instances = 500,
-                 #max_instances=None,
+                 #max_instances = 500,
+                 max_instances=None,
                  cross_validate = False,
                  evaluate_test_data = False):
 
@@ -146,7 +146,7 @@ class TrainMaliciousURLClassifier(object):
 
             n_iter = 10
             param_dist = {
-                'xgb__max_depth': [2, 5, 8, 10],
+                'xgb__max_depth': [2, 4, 6, 8, 10],
                 'xgb__learning_rate': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3],
             }
 
