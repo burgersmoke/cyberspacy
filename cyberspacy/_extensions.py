@@ -59,17 +59,18 @@ def get_doc_extensions():
     return _doc_extensions
 
 _token_extensions = {
-
-}
-
-
-_span_extensions = {
     "URL_scheme": {"default": None},
     "URL_netloc": {"default": None},
     "URL_path": {"default": None},
     "URL_params": {"default": None},
     "URL_query": {"default": None},
     "URL_fragment": {"default": None},
+    "URL_malicious_classification": {"default": None},
+}
+
+
+_span_extensions = {
+
 }
 
 _doc_extensions = {

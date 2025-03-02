@@ -1,0 +1,10 @@
+name: cyberspacy
+channels:
+    - conda-forge
+    # - pytorch
+    # - nvidia
+dependencies:
+    - python>=3.12
+    - spacy>=3.8
+    - spacy-model-en_core_web_sm
+    - pytest
