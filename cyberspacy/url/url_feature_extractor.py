@@ -30,9 +30,15 @@ class URLFeatureExtractor(object):
             domain = netloc_tokens[1]
             domain_extension = netloc_tokens[-1]
 
-        feature_dict['fragment'] = token._.URL_fragment
+        feature_dict['has_fragment'] = len(token._.URL_fragment) > 0
+        feature_dict['has_query'] = len(token._.URL_query) > 0
+        feature_dict['has_params'] = len(token._.URL_params) > 0
         feature_dict['subdomain'] = subdomain
         feature_dict['domain'] = domain
         feature_dict['domain_extension'] = domain_extension
+        feature_dict['total_netloc_tokens'] = len(netloc_tokens)
+        # experimental features
+        feature_dict['total_netloc_tokens_over_3'] = len(netloc_tokens) > 3
+        feature_dict['total_netloc_tokens_over_4'] = len(netloc_tokens) > 4
 
         return feature_dict

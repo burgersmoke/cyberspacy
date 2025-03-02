@@ -3,7 +3,12 @@ import glob
 import logging
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split, RandomizedSearchCV, StratifiedKFold
+from sklearn.pipeline import Pipeline
+
+import xgboost as xgb
 
 from spacy.tokens import Token
 
@@ -17,12 +22,14 @@ class TrainMaliciousURLClassifier(object):
     def __init__(self,
                  validation_percent = 0.20,
                  test_percent = 0.10,
-                 max_instances = 50):
+                 max_instances = 50,
+                 evaluate_test_data = False):
 
         self.cyberspacy_label_name = 'cyberspacy_label'
         self.validation_percent = validation_percent
         self.test_percent = test_percent
         self.max_instances = max_instances
+        self.evaluate_test_data = evaluate_test_data
 
         self.nlp = None
 
@@ -116,8 +123,44 @@ class TrainMaliciousURLClassifier(object):
         print(f'len(y_test): {len(y_test)}')
 
 
+        # let's set up a pipeline for feature encoding and a model
+
+        n_estimators = 100
+        max_depth = 8
+        n_iter = 10
+
+        param_dist = {
+            'xgb__max_depth': [2, 5, 8, 10],
+            'xgb__learning_rate': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3],
+        }
+
+        pipe = Pipeline([('vectorizer', DictVectorizer()),
+                         ('xgb', xgb.XGBClassifier(n_estimators = n_estimators,
+                                                   max_depth = max_depth))])
+
+        cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=7)
+
+        search = RandomizedSearchCV(pipe,
+                                    param_distributions=param_dist,
+                                    cv = cv,
+                                    n_iter=n_iter)
+        search_result = search.fit(X_train, y_train)
+
+        print("Best: %f using %s" % (search_result.best_score_, search_result.best_params_))
+
+        y_train_pred = search.predict(X_train)
+
+        print('Validation set performance:')
+        print(classification_report(y_train, y_train_pred))
+
+        y_val_pred = search.predict(X_val)
+
+        print('Validation set performance:')
+        print(classification_report(y_val, y_val_pred))
 
 
+        if self.evaluate_test_data:
+            print('Evaluating on test data..')
 
 
 
