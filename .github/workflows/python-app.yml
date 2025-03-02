@@ -36,13 +36,18 @@ jobs:
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}   
+        python-version: ${{ matrix.python-version }}
+    - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: "latest"     
 
                
     - name: Install dependencies      
       run: |
         python --version
         pip install flake8
+        conda env create -f environment.yml
+        conda activate cyberspacy
 
     - name: print v version
       run: python -c 'import cyberspacy; print(cyberspacy.__version__); print(cyberspacy.__file__)'
