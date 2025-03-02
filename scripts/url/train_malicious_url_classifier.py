@@ -1,6 +1,8 @@
 import os
 import glob
 import logging
+import datetime
+import pickle
 
 import pandas as pd
 from sklearn.feature_extraction import DictVectorizer
@@ -22,14 +24,16 @@ class TrainMaliciousURLClassifier(object):
     def __init__(self,
                  validation_percent = 0.20,
                  test_percent = 0.10,
-                 #max_instances = 50,
-                 max_instances=None,
+                 max_instances = 500,
+                 #max_instances=None,
+                 cross_validate = False,
                  evaluate_test_data = False):
 
         self.cyberspacy_label_name = 'cyberspacy_label'
         self.validation_percent = validation_percent
         self.test_percent = test_percent
         self.max_instances = max_instances
+        self.cross_validate = cross_validate
         self.evaluate_test_data = evaluate_test_data
 
         self.nlp = None
@@ -131,33 +135,50 @@ class TrainMaliciousURLClassifier(object):
 
         n_estimators = 100
         max_depth = 8
-        n_iter = 10
 
-        param_dist = {
-            'xgb__max_depth': [2, 5, 8, 10],
-            'xgb__learning_rate': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3],
-        }
+        best_pipe = None
 
         pipe = Pipeline([('vectorizer', DictVectorizer()),
                          ('xgb', xgb.XGBClassifier(n_estimators = n_estimators,
                                                    max_depth = max_depth))])
 
-        cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=7)
+        if self.cross_validate:
 
-        search = RandomizedSearchCV(pipe,
-                                    param_distributions=param_dist,
-                                    cv = cv,
-                                    n_iter=n_iter)
-        search_result = search.fit(X_train, y_train)
+            n_iter = 10
+            param_dist = {
+                'xgb__max_depth': [2, 5, 8, 10],
+                'xgb__learning_rate': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3],
+            }
 
-        print("Best: %f using %s" % (search_result.best_score_, search_result.best_params_))
 
-        y_train_pred = search.predict(X_train)
+            logger.info('About to run RandomizedSearchCV...')
+
+            cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=7)
+
+            search = RandomizedSearchCV(pipe,
+                                        param_distributions=param_dist,
+                                        cv = cv,
+                                        n_iter=n_iter)
+            search_result = search.fit(X_train, y_train)
+
+            best_pipe = search
+
+            print("Best: %f using %s" % (search_result.best_score_, search_result.best_params_))
+
+        else:
+            logger.info('About to run single fit')
+
+            pipe.fit(X_train, y_train)
+
+            # no CV or parameter search, so just keep this...
+            best_pipe = pipe
+
+        y_train_pred = best_pipe.predict(X_train)
 
         print('Train set performance:')
         print(classification_report(y_train, y_train_pred))
 
-        y_val_pred = search.predict(X_val)
+        y_val_pred = best_pipe.predict(X_val)
 
         print('Validation set performance:')
         print(classification_report(y_val, y_val_pred))
@@ -167,12 +188,32 @@ class TrainMaliciousURLClassifier(object):
             print('Evaluating on test data..')
 
 
+        model_output_dir = os.path.join(__file__, '../model_output/')
 
+        now_str = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        model_subdir_name = f'malicious_url_classifier_{now_str}'
 
+        model_subdir_path = os.path.join(model_output_dir, model_subdir_name)
 
+        logger.info(f'Prepping to write model to directory: {model_subdir_path}')
+
+        if not os.path.exists(model_subdir_path):
+            os.makedirs(model_subdir_path)
+
+        # now we can write this out...
+        model_file_name = 'malicious_url_classifier_pipeline_xgboost.pkl'
+        model_file_path = os.path.join(model_subdir_path, model_file_name)
+
+        logger.info(f'Prepping to write model to file: {model_file_path}')
+
+        pickle.dump(best_pipe, open(model_file_path, 'wb'))
+
+        logger.info(f'Model written to file: {model_file_path}')
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+
     classifier = TrainMaliciousURLClassifier()
 
     classifier.train()
