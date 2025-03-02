@@ -11,6 +11,15 @@ class PipelineFactory(object):
 
         set_extensions()
 
+    def create_url_parser_pipeline(self):
+        #start with blank
+        nlp = spacy.blank("en")
+
+        # break URLs into parts
+        nlp.add_pipe("cyberspacy_url_parser")
+
+        return nlp
+
     def create_malicious_url_classifier_pipeline(self):
         #start with blank
         nlp = spacy.blank("en")

@@ -15,8 +15,14 @@ class URLParser(object):
         # let's parse all URL entities
         for token_idx, token in enumerate(doc):
             if token.like_url:
+
+                token_text = token.text
+                # add protocol if it is not there...
+                if not token_text.lower().startswith('http'):
+                    token_text = 'http://' + token_text
+
                 # let's parse this and add extensions we might use for features
-                url_fragments = urllib.parse.urlparse(token.text)
+                url_fragments = urllib.parse.urlparse(token_text)
 
                 # per this: https://docs.python.org/3/library/urllib.parse.html
                 token._.URL_scheme =    url_fragments[0]

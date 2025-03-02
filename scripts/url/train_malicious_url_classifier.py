@@ -5,8 +5,11 @@ import logging
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from spacy.tokens import Token
+
 import cyberspacy
 from cyberspacy.pipelines import PipelineFactory
+from cyberspacy.url.url_feature_extractor import URLFeatureExtractor
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +23,12 @@ class TrainMaliciousURLClassifier(object):
         self.validation_percent = validation_percent
         self.test_percent = test_percent
         self.max_instances = max_instances
+
+        self.nlp = None
+
+        factory = PipelineFactory()
+
+        self.nlp = factory.create_url_parser_pipeline()
 
         # let's load the data we need
         base_dir = os.path.join(__file__, '../../../data/url')
@@ -67,19 +76,38 @@ class TrainMaliciousURLClassifier(object):
 
         X_text = self.df['url'].tolist()
 
+        # process them with our NLP pipeline...
+        X_docs = self.nlp.pipe(X_text)
+
+        # now lets get our URL tokens
+        X_url_tokens = []
+        for X_doc in X_docs:
+            url_token = None
+            for token in X_doc:
+
+                if url_token is None:
+                    url_token = token
+
+                if token.like_url:
+                    url_token = token
+
+            X_url_tokens.append(url_token)
+
         # before we go on, let's convert these to feature dictionaries
+        extractor = URLFeatureExtractor()
+        X = [extractor.extract_feature_dictionary(x) for x in X_url_tokens]
 
         y = self.df[self.cyberspacy_label_name].tolist()
 
         val_test_percent = self.validation_percent + self.test_percent
         train_percent = 1.0 - val_test_percent
 
-        X_text_train, X_text_valtest, y_train, y_valtest = train_test_split(X_text, y, stratify = y,
+        X_train, X_valtest, y_train, y_valtest = train_test_split(X, y, stratify = y,
                                                                             random_state = 77)
 
         test_size = int(len(X_text) * self.test_percent)
 
-        X_text_val, X_text_test, y_val, y_test = train_test_split(X_text_valtest, y_valtest,
+        X_val, X_test, y_val, y_test = train_test_split(X_valtest, y_valtest,
                                                                   test_size = test_size, stratify = y_valtest,
                                                                   random_state = 777)
 
