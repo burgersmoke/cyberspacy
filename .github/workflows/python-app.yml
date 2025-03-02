@@ -35,8 +35,8 @@ jobs:
     - uses: actions/checkout@v2
     - uses: conda-incubator/setup-miniconda@v3
       with:
-        activate-environment: anaconda-client-env
-        environment-file: etc/example-environment.yml
+        activate-environment: cyberspacy
+        environment-file: environment.yml
         python-version: 3.12
         auto-activate-base: false
         
