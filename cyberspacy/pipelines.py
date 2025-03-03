@@ -21,6 +21,11 @@ class PipelineFactory(object):
         return nlp
 
     def create_malicious_url_classifier_pipeline(self):
+        '''
+        Creates a simple pipeline which processes URLs it encounters and applies
+        a predictive model to determine if the URL might be malicious.
+        The training of this model was performed with two datasets from Kaggle
+        '''
         #start with blank
         nlp = spacy.blank("en")
 
