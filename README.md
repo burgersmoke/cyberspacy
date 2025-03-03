@@ -2,6 +2,9 @@
     <img src="./images/cyberspacy_logo_v2.png">
 </p>
 
+Status:
+[![cyberspacy](https://github.com/burgersmoke/cyberspacy/actions/workflows/python-app.yml/badge.svg)](https://github.com/burgersmoke/cyberspacy/actions/workflows/python-app.yml)
+
 # cyberspacy
 cybersecurity text processing toolkit with spacy, with modular components and use cases
 
