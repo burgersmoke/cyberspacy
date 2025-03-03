@@ -46,10 +46,6 @@ jobs:
         python --version
         
         conda list
-        
-    - name: install cyberspacy
-      shell: bash -l {0}    
-      run: python setup.py install
 
     - name: print v version
       shell: bash -l {0}    
