@@ -12,3 +12,6 @@ dependencies:
     - xgboost
     - pytest
     - flake8
+    - nb_conda_kernels
+    - jupyter
+    - tqdm
