@@ -20,10 +20,11 @@ framework. The `cyberspacy` package brings together a number of other packages, 
 At the current time, cyberspacy only supports installing its dependencies with `conda` or an equivalent alternative with the provided environment file:
 
 ```bash
-conda install -f environment.yml
+conda env create -f environment.yml
 ```
 
-# cyberspacy_malicious_url_classifier performance results
+# Performance metrics
+## cyberspacy_malicious_url_classifier performance results
 
 The current model is a very simple model demonstrating features created in two hours of coding.  More features are soon to be added.
 
