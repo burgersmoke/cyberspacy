@@ -23,6 +23,22 @@ At the current time, cyberspacy only supports installing its dependencies with `
 conda env create -f environment.yml
 ```
 
+Once you have cyberspacy and its dependencies, you can either start to use each of its modualr pieces directly or you can use the `PipelineFactory` class to select from a number of "out of the box" pipelines.
+
+For example, this will construct a `PipelineFactory` and get a new pipeline for detecting URLS, and whether they may be malicious:
+
+```python
+from cyberspacy.pipelines import PipelineFactory
+
+factory = PipelineFactory()
+
+nlp = factory.create_malicious_url_classifier_pipeline()
+
+text = 'My project is also on http://www.github.com as well'
+
+doc = nlp(text)
+```
+
 # Performance metrics
 ## cyberspacy_malicious_url_classifier performance results
 
