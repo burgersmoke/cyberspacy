@@ -38,7 +38,11 @@ jobs:
         activate-environment: cyberspacy
         environment-file: environment.yml
         python-version: 3.12
-        auto-activate-base: false   
+        auto-activate-base: false  
+
+    - run: |
+          conda info
+          conda list        
                
     - name: Check dependencies      
       run: |
