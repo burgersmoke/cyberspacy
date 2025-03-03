@@ -39,6 +39,10 @@ text = 'My project is also on http://www.github.com as well'
 doc = nlp(text)
 ```
 
+# Demo 
+
+To give a brief sense of some of the initial capabilities and components of cyberspacy, this notebook gives an [example](notebooks/cyberspacy_demo.ipynb)
+
 # Performance metrics
 ## cyberspacy_malicious_url_classifier performance results
 
